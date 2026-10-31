@@ -1,0 +1,7 @@
+{
+  "name": "Wikis Tech — Portfolio + Admin CMS",
+  "description": "Production portfolio and portfolio operating system for Wisdom / Wikis Tech Corporation combining public editorial showcase and private admin CMS.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
