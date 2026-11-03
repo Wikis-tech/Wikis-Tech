@@ -24,7 +24,14 @@ export default function AdminError({
         <p className="mt-4 text-sm leading-6 text-white/50 max-w-lg mx-auto">
           Your portfolio content is still safe. Retry the page first. If your session became stale after a deployment, return to the dashboard or sign in again.
         </p>
-        {error.digest && <p className="mt-4 text-xs font-mono text-white/30">Reference: {error.digest}</p>}
+        {error.message && !error.message.includes("digest") && (
+          <div className="mt-4 rounded-xl border border-rose-500/20 bg-rose-500/10 p-3 text-left">
+            <p className="font-mono text-xs text-rose-300 break-all">{error.message}</p>
+          </div>
+        )}
+        {error.digest && (
+          <p className="mt-2 text-xs font-mono text-white/30">Reference: {error.digest}</p>
+        )}
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <button
@@ -44,6 +51,12 @@ export default function AdminError({
             className="rounded-xl border border-[#6f8cff]/30 bg-[#6f8cff]/10 px-5 py-2.5 text-xs font-medium text-[#6f8cff] transition hover:bg-[#6f8cff]/20"
           >
             Admin Dashboard
+          </Link>
+          <Link
+            href="/admin-wikis/database"
+            className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-5 py-2.5 text-xs font-medium text-emerald-400 transition hover:bg-emerald-500/20"
+          >
+            Database &amp; SQL Hub
           </Link>
           <Link
             href="/admin-wikis/login"

@@ -34,7 +34,7 @@ export default async function AboutPage() {
   const skillGroups = ["Build", "Design", "Think", "AI"];
   const techCategories = ["Frontend", "Backend/Data", "Infrastructure", "Creative", "Business", "AI"];
 
-  const portraitUrl = a?.portrait_url || "https://cdn.phototourl.com/member/2026-10-26-165852db-185f-49d6-b795-d8ca9ea3f9d7.png";
+  const portraitUrl = a?.portrait_url || "/wikis.png";
 
   return (
     <main className="public-page min-h-screen bg-[#050812] text-white">

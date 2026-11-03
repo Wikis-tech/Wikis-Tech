@@ -9,7 +9,7 @@ import {
   updateProject,
   uploadProjectMedia,
 } from "../actions";
-import { CheckCircle2, AlertTriangle, ExternalLink, ArrowLeft, Upload, Trash2 } from "lucide-react";
+import { CheckCircle2, AlertTriangle, ExternalLink, ArrowLeft, Upload, Trash2, Briefcase } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -22,9 +22,42 @@ type Props = {
   searchParams: Promise<{ saved?: string; published?: string; error?: string; created?: string }>;
 };
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default async function ProjectEditor({ params, searchParams }: Props) {
   const { id } = await params;
   const { saved, published, error, created } = await searchParams;
+
+  if (!UUID_REGEX.test(id)) {
+    return (
+      <main className="mx-auto max-w-2xl space-y-6 pt-10 text-center">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 sm:p-12 space-y-5">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6f8cff]/15 text-[#6f8cff] mx-auto">
+            <Briefcase className="h-6 w-6" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-white">Invalid Project Reference</h1>
+          <p className="text-sm text-white/50 max-w-md mx-auto leading-relaxed">
+            The project identifier <code className="font-mono text-xs text-[#6f8cff]">{id}</code> is not a valid UUID format.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 pt-3">
+            <Link
+              href="/admin-wikis/projects"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-semibold text-black transition hover:bg-white/90 shadow-md"
+            >
+              <span>View All Websites &amp; Apps</span>
+            </Link>
+            <Link
+              href="/admin-wikis"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+              <span>Admin Dashboard</span>
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   const s = await createClient();
 
   const [{ data: p }, { data: c }, { data: l }, { data: blocks }] = await Promise.all([
@@ -34,7 +67,41 @@ export default async function ProjectEditor({ params, searchParams }: Props) {
     s.from("project_blocks").select("*").eq("project_id", id).order("sort_order"),
   ]);
 
-  if (!p) notFound();
+  if (!p) {
+    return (
+      <main className="mx-auto max-w-2xl space-y-6 pt-10 text-center">
+        <div className="rounded-3xl border border-white/10 bg-white/[0.02] p-8 sm:p-12 space-y-5">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6f8cff]/15 text-[#6f8cff] mx-auto">
+            <Briefcase className="h-6 w-6" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-semibold text-white">Project Not Found</h1>
+          <p className="text-sm text-white/50 max-w-md mx-auto leading-relaxed">
+            This project was not found in your Supabase database or has been moved to Trash.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 pt-3">
+            <Link
+              href="/admin-wikis/projects"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-semibold text-black transition hover:bg-white/90 shadow-md"
+            >
+              <span>View All Websites &amp; Apps</span>
+            </Link>
+            <Link
+              href="/admin-wikis/trash"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-xs font-medium text-white/80 transition hover:bg-white/10 hover:text-white"
+            >
+              <span>Check Trash &amp; Recovery</span>
+            </Link>
+            <Link
+              href="/admin-wikis/projects/new"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#6f8cff]/30 bg-[#6f8cff]/10 px-5 py-2.5 text-xs font-medium text-[#6f8cff] transition hover:bg-[#6f8cff]/20"
+            >
+              <span>+ Add New Project</span>
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   const selected = new Set((l ?? []).map((x) => x.category_id));
   const mediaIds = [p.card_media_id, p.hero_media_id].filter(Boolean);
