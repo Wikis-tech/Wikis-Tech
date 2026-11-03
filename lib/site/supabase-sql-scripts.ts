@@ -381,8 +381,38 @@ BEGIN
   END LOOP;
 END $$;
 
+-- =========================================================================
+-- 7. SUPABASE STORAGE BUCKET & POLICIES (portfolio-public)
+-- =========================================================================
+
+-- Create storage bucket if it does not exist:
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('portfolio-public', 'portfolio-public', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Storage RLS policies:
+DROP POLICY IF EXISTS "portfolio_public_read" ON storage.objects;
+CREATE POLICY "portfolio_public_read" ON storage.objects
+  FOR SELECT TO anon, authenticated
+  USING (bucket_id = 'portfolio-public');
+
+DROP POLICY IF EXISTS "portfolio_authenticated_insert" ON storage.objects;
+CREATE POLICY "portfolio_authenticated_insert" ON storage.objects
+  FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'portfolio-public');
+
+DROP POLICY IF EXISTS "portfolio_authenticated_update" ON storage.objects;
+CREATE POLICY "portfolio_authenticated_update" ON storage.objects
+  FOR UPDATE TO authenticated
+  USING (bucket_id = 'portfolio-public');
+
+DROP POLICY IF EXISTS "portfolio_authenticated_delete" ON storage.objects;
+CREATE POLICY "portfolio_authenticated_delete" ON storage.objects
+  FOR DELETE TO authenticated
+  USING (bucket_id = 'portfolio-public');
+
 -- Verify everything with a test query:
-SELECT 'Handshake and RLS synchronization complete! All tables are accessible.' AS status;
+SELECT 'Handshake and RLS synchronization complete! All tables and storage buckets are accessible.' AS status;
 `;
 
 export const MIGRATIONS_CATALOG: MigrationScript[] = [
