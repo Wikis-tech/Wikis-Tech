@@ -8,7 +8,7 @@ Production portfolio and portfolio operating system for **Wisdom / Wikis Tech Co
 
 The product combines two connected experiences:
 
-- **Public portfolio** — a premium, editorial showcase of work across software, product, design, AI, strategy and business technology.
+- **Public portfolio** — a premium personal, editorial showcase of work across software, product, design, AI, strategy and business technology.
 - **Private Admin CMS** — a secure portfolio operating system for managing projects, designs, experiments, services, pricing, messages, quote requests, media, SEO, navigation and site settings without editing source code.
 
 Both experiences share **Supabase/PostgreSQL + Supabase Storage** as the source of truth.
