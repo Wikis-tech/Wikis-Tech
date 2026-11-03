@@ -4,7 +4,16 @@ import { getSupabaseEnv } from "@/lib/env";
 
 export async function updateSession(request: NextRequest) {
   const env = getSupabaseEnv();
-  let response = NextResponse.next({ request });
+  const pathname = request.nextUrl.pathname;
+  const allCookies = request.cookies.getAll();
+  const hasAuthCookie = allCookies.some((c) => c.name.startsWith("sb-"));
+
+  // Fast path: skip expensive claims check if user is on login page or has no supabase cookies
+  if (!hasAuthCookie || pathname.startsWith("/admin-wikis/login")) {
+    return NextResponse.next();
+  }
+
+  const response = NextResponse.next();
 
   const supabase = createServerClient(
     env.NEXT_PUBLIC_SUPABASE_URL,
@@ -14,25 +23,28 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet, headers) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-
-          response = NextResponse.next({ request });
-
+        setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );
-
-          Object.entries(headers).forEach(([key, value]) =>
-            response.headers.set(key, value),
-          );
+        },
+      },
+      global: {
+        fetch: (url, options) => {
+          return fetch(url, {
+            ...options,
+            signal: options?.signal || AbortSignal.timeout(3000),
+          });
         },
       },
     },
   );
 
-  await supabase.auth.getClaims();
+  try {
+    await supabase.auth.getClaims();
+  } catch {
+    // Session token claims check failure should not block the response
+  }
+
   return response;
 }

@@ -10,6 +10,9 @@ import {fallbackExperience,fallbackLab,fallbackProjects,fallbackServices,fallbac
 
 export async function generateMetadata(){return getPageMetadata("home",{title:"Okoh Wisdom — Websites, Digital Products & Intelligent Tools",description:"Software developer, digital product builder and creative technologist combining code, design, AI and strategy.",path:"/"});}
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type Snapshot={problem?:string;outcome?:string;live_url?:string|null;card_media_url?:string|null};
 export default async function HomePage(){
  const s=await createClient();

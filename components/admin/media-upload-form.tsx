@@ -3,7 +3,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {createClient} from "@/lib/supabase/client";
-import {finalizeMediaUpload} from "@/app/admin/(protected)/media/actions";
+import {finalizeMediaUpload} from "@/app/admin-wikis/(protected)/media/actions";
 
 const imageTypes=["image/jpeg","image/png","image/webp","image/avif"];
 const allowed=[...imageTypes,"application/pdf"];

@@ -23,6 +23,9 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
  return entityMetadata({title:snap.seo_title||data.title,description:snap.seo_description||data.short_description||"Project case study by Okoh Wisdom.",path:`/work/${slug}`,image:snap.seo_image_url||null,noindex:snap.seo_noindex||false,siteName:site.brand_name,origin:siteOrigin(site)});
 }
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function ProjectPage({params}:{params:Promise<{slug:string}>}){
  const {slug}=await params;
  const s=await createClient();

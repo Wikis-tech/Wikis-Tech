@@ -2,7 +2,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {createClient} from "@/lib/supabase/client";
-import {createDesign} from "@/app/admin/(protected)/designs/actions";
+import {createDesign} from "@/app/admin-wikis/(protected)/designs/actions";
 const input="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2.5 text-sm";
 type Cat={id:string;name:string};
 export function DesignCreateForm({categories}:{categories:Cat[]}){

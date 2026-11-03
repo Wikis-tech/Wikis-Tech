@@ -5,7 +5,7 @@ export default async function robots():Promise<MetadataRoute.Robots>{
  const site=await getSiteSettings();
  const origin=siteOrigin(site);
  return {
-  rules:[{userAgent:"*",allow:"/",disallow:["/admin/","/admin","/quote"]}],
+  rules:[{userAgent:"*",allow:"/",disallow:["/admin-wikis/","/admin-wikis","/admin/","/admin","/quote"]}],
   sitemap:`${origin}/sitemap.xml`,
   host:origin,
  };

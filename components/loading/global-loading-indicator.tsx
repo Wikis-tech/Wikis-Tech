@@ -10,7 +10,7 @@ function isModifiedClick(event:MouseEvent){
 export function GlobalLoadingIndicator(){
  const pathname=usePathname();
  const [active,setActive]=useState(false);
- const admin=pathname.startsWith("/admin");
+ const admin=pathname.startsWith("/admin-wikis");
  const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const startedAt=useRef(0);
 

@@ -12,7 +12,7 @@ export async function requireCmsUser() {
   const userId = claimsData?.claims?.sub;
 
   if (claimsError || !userId) {
-    redirect("/admin/login");
+    redirect("/admin-wikis/login");
   }
 
   const { data: profile, error: profileError } = await supabase
@@ -28,7 +28,7 @@ export async function requireCmsUser() {
     !["admin", "editor"].includes(profile.role)
   ) {
     await supabase.auth.signOut();
-    redirect("/admin/login?error=unauthorized");
+    redirect("/admin-wikis/login?error=unauthorized");
   }
 
   return {
