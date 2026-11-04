@@ -45,10 +45,3 @@ export const fallbackLab=[
  {id:"fb-l3",title:"Portfolio Motion & Theme System",slug:"portfolio-motion-theme",description:"An interaction study combining dark/light themes, reveal motion, hover behaviour and accessible animation.",status:"experiment",technology:["React","CSS","Motion"],image_url:null,featured:true,experiment_date:null},
 ];
 
-export const fallbackTestimonials=[
- {id:"fb-t1",name:"Adebayo Ogunlesi",position:"Managing Director",company:"FMJ Handicraft",photo_url:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",quote:"Wisdom developed and maintains our company web platform with remarkable discipline. Technical delivery was ahead of schedule, communication was seamless, and the site has directly driven client inquiries.",featured:true,sort_order:10},
- {id:"fb-t2",name:"Dr. Chioma Nwosu",position:"Founder & Lead Director",company:"EduSphere Initiative",photo_url:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",quote:"Working with Okoh on our educational portal was an exceptional experience. He understands not just modern software engineering and responsive design, but the actual user journey of students and educators.",featured:true,sort_order:20},
- {id:"fb-t3",name:"Tunde Bakare",position:"Head of Operations",company:"SCM Capital Associate",photo_url:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",quote:"Wisdom consistently delivers thoughtful digital solutions. His ability to connect business thinking, graphic communication, and robust coding is rare among developers at his stage.",featured:true,sort_order:30},
- {id:"fb-t4",name:"Favour Eze",position:"Product Lead",company:"CampusLink Network",photo_url:"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",quote:"From initial product wireframes to full-stack Supabase integration, Wisdom turned an ambitious marketplace concept into a live, dependable web app.",featured:false,sort_order:40},
-];
-

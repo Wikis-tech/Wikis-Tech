@@ -13,7 +13,6 @@ import {
   fallbackProjects,
   fallbackServices,
   fallbackSkills,
-  fallbackTestimonials,
 } from "@/lib/site/fallback-content";
 import { ArrowRight, Sparkles, Layers } from "lucide-react";
 
@@ -106,7 +105,8 @@ export default async function HomePage() {
   const safeSkills = skills?.length ? skills : fallbackSkills;
   const safeExperience = experience?.length ? experience : fallbackExperience;
   const safeProjects = (projects?.length ? projects : fallbackProjects).slice(0, 4);
-  const safeTestimonials = (testimonials?.length ? testimonials : fallbackTestimonials) as TestimonialItem[];
+  // Only display real testimonials directly from Supabase (never inject mock/fallback testimonials):
+  const safeTestimonials = (testimonials ?? []) as TestimonialItem[];
   const safeServices = services?.length ? services : fallbackServices;
   const safeExperiments = experiments?.length ? experiments : fallbackLab;
 
