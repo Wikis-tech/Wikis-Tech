@@ -105,16 +105,28 @@ export default async function ProjectEditor({ params, searchParams }: Props) {
 
   const selected = new Set((l ?? []).map((x) => x.category_id));
   const mediaIds = [p.card_media_id, p.hero_media_id].filter(Boolean);
-  const { data: mediaRows } = mediaIds.length
-    ? await s.from("media_library").select("id,storage_bucket,storage_path").in("id", mediaIds)
-    : { data: [] };
+  let mediaRows: any[] = [];
+  try {
+    if (mediaIds.length) {
+      const res = await s.from("media_library").select("id,storage_bucket,storage_path").in("id", mediaIds);
+      mediaRows = res.data ?? [];
+    }
+  } catch (e) {
+    console.warn("Could not query media library:", e);
+  }
 
   const mediaUrl = (mediaId: string | null) => {
-    const row = mediaRows?.find((x) => x.id === mediaId);
-    return row ? s.storage.from(row.storage_bucket).getPublicUrl(row.storage_path).data.publicUrl : null;
+    try {
+      const row = mediaRows.find((x) => x.id === mediaId);
+      return row && row.storage_bucket
+        ? s.storage.from(row.storage_bucket).getPublicUrl(row.storage_path).data.publicUrl
+        : null;
+    } catch {
+      return null;
+    }
   };
-  const cardUrl = mediaUrl(p.card_media_id);
-  const heroUrl = mediaUrl(p.hero_media_id);
+  const cardUrl = (p as any).card_media_url || (p.published_snapshot as any)?.card_media_url || mediaUrl(p.card_media_id);
+  const heroUrl = (p as any).hero_media_url || (p.published_snapshot as any)?.hero_media_url || mediaUrl(p.hero_media_id);
 
   return (
     <main className="mx-auto max-w-5xl space-y-8">
@@ -356,6 +368,42 @@ export default async function ProjectEditor({ params, searchParams }: Props) {
 
             <Field label="Live Website / Product URL" name="liveUrl" defaultValue={p.live_url} placeholder="https://..." />
             <Field label="GitHub Repository URL" name="githubUrl" defaultValue={p.github_url} placeholder="https://github.com/..." />
+
+            {/* Direct Image URLs (preserve Supabase storage) */}
+            <div className="sm:col-span-2 rounded-2xl border border-[#6f8cff]/20 bg-[#6f8cff]/5 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-xs font-semibold text-[#6f8cff] uppercase">
+                  DIRECT IMAGE URLS (PRESERVES SUPABASE STORAGE QUOTA)
+                </span>
+              </div>
+              <p className="text-xs text-white/50">
+                You can paste direct external image URLs (from Unsplash, GitHub, Imgur, Cloudinary, or local /assets) instead of uploading files to save storage.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2 pt-1">
+                <div>
+                  <label className="block text-xs font-medium text-white/70 mb-1">
+                    Card Preview Image URL
+                  </label>
+                  <input
+                    name="cardMediaUrl"
+                    defaultValue={cardUrl ?? ""}
+                    placeholder="https://... (direct URL)"
+                    className={input}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-white/70 mb-1">
+                    Hero Banner Image URL
+                  </label>
+                  <input
+                    name="heroMediaUrl"
+                    defaultValue={heroUrl ?? ""}
+                    placeholder="https://... (direct URL)"
+                    className={input}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">

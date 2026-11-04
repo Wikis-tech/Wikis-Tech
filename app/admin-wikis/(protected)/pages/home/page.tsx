@@ -32,10 +32,18 @@ export default async function HomeEditor({ searchParams }: Props) {
   const { saved, error } = await searchParams;
   const s = await createClient();
 
-  const [{ data: heroRow }, { data: sections }] = await Promise.all([
-    s.from("hero_settings").select("*").eq("singleton_key", "default").maybeSingle(),
-    s.from("page_sections").select("*").eq("page_key", "home").order("sort_order"),
-  ]);
+  let heroRow: any = null;
+  let sections: any[] = [];
+  try {
+    const [hRes, sRes] = await Promise.all([
+      s.from("hero_settings").select("*").eq("singleton_key", "default").maybeSingle(),
+      s.from("page_sections").select("*").eq("page_key", "home").order("sort_order"),
+    ]);
+    heroRow = hRes.data;
+    sections = sRes.data ?? [];
+  } catch (e) {
+    console.warn("Recovered from home content load issue:", e);
+  }
 
   const h = heroRow || DEFAULT_HERO;
   const words = Array.isArray(h.rotating_words)

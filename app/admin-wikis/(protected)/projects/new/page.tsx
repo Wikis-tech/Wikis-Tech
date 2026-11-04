@@ -126,6 +126,20 @@ export default async function NewProjectPage({ searchParams }: Props) {
               <label className="block text-xs font-medium text-white/60 mb-1.5">GitHub Repository</label>
               <input name="githubUrl" placeholder="https://github.com/..." className={input} />
             </div>
+
+            <div>
+              <label className="block text-xs font-medium text-white/60 mb-1.5">
+                Card Preview Image URL (Direct external link)
+              </label>
+              <input name="cardMediaUrl" placeholder="https://... (preserves Supabase storage)" className={input} />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-white/60 mb-1.5">
+                Hero Banner Image URL (Direct external link)
+              </label>
+              <input name="heroMediaUrl" placeholder="https://... (preserves Supabase storage)" className={input} />
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">

@@ -356,6 +356,11 @@ CREATE POLICY "quote_requests_public_insert" ON public.quote_requests
   FOR INSERT TO anon, authenticated
   WITH CHECK (true);
 
+-- Ensure projects table supports direct external image URLs (preserves Supabase storage quota):
+ALTER TABLE public.projects 
+  ADD COLUMN IF NOT EXISTS card_media_url text,
+  ADD COLUMN IF NOT EXISTS hero_media_url text;
+
 -- =========================================================================
 -- 6. FULL ADMIN CMS ACCESS POLICIES (FOR AUTHENTICATED USERS)
 -- =========================================================================

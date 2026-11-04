@@ -15,6 +15,7 @@ import {
   EyeOff,
   User,
   Building,
+  Sparkles,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -51,16 +52,27 @@ export default async function AdminTestimonialsPage({ searchParams }: Props) {
             Client Endorsements &amp; Reviews
           </h1>
           <p className="mt-1 text-sm text-white/50">
-            Manage genuine client reviews, recommendations, and quotes shown across your portfolio.
+            Manage genuine client reviews, recommendations, and quotes shown across your homepage carousel (up to 20 endorsements).
           </p>
         </div>
 
         <div className="flex items-center gap-3 font-mono text-xs text-white/40">
           <span>{items.length} total</span>
           <span>·</span>
-          <span className="text-emerald-400">{visibleCount} live</span>
+          <span className="text-emerald-400">{visibleCount} live on homepage</span>
           <span>·</span>
           <span className="text-[#6f8cff]">{featuredCount} featured</span>
+        </div>
+      </div>
+
+      {/* Storage Tip */}
+      <div className="flex items-start gap-3 rounded-2xl border border-[#6f8cff]/20 bg-[#6f8cff]/5 p-4 text-xs text-white/70">
+        <Sparkles className="h-4 w-4 shrink-0 text-[#6f8cff] mt-0.5" />
+        <div>
+          <p className="font-semibold text-white">Direct Image URL Support Enabled</p>
+          <p className="mt-0.5 text-white/50 leading-relaxed">
+            You can paste direct image URLs (from Unsplash, LinkedIn, GitHub, Imgur, Cloudinary) into the Photo URL field to display client avatars without using up your Supabase Storage quota.
+          </p>
         </div>
       </div>
 
@@ -129,12 +141,12 @@ export default async function AdminTestimonialsPage({ searchParams }: Props) {
 
             <div>
               <label className="block text-xs font-medium text-white/60 mb-1.5">
-                Photo URL / Avatar
+                Photo URL / Avatar (External URL or Storage)
               </label>
               <input
                 name="photoUrl"
                 type="text"
-                placeholder="https://... or /assets/..."
+                placeholder="https://... (preserves Supabase storage)"
                 className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-xs text-white outline-none focus:border-[#6f8cff]"
               />
             </div>
@@ -179,7 +191,7 @@ export default async function AdminTestimonialsPage({ searchParams }: Props) {
                 <input
                   name="sortOrder"
                   type="number"
-                  defaultValue={items.length}
+                  defaultValue={items.length * 10 + 10}
                   className="w-16 rounded-lg border border-white/10 bg-black/40 px-2 py-1 text-xs text-white"
                 />
               </div>
@@ -221,13 +233,13 @@ export default async function AdminTestimonialsPage({ searchParams }: Props) {
 
                   <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/[0.05] border border-white/10 text-[#6f8cff]">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/[0.05] border border-white/10 text-[#6f8cff] overflow-hidden">
                         {t.photo_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={t.photo_url}
                             alt={t.name}
-                            className="h-full w-full rounded-full object-cover"
+                            className="h-full w-full object-cover"
                           />
                         ) : (
                           <User className="h-5 w-5" />
@@ -267,14 +279,31 @@ export default async function AdminTestimonialsPage({ searchParams }: Props) {
                     <div className="flex items-center gap-2">
                       <button
                         type="submit"
-                        className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 hover:text-white"
+                        className="rounded-lg border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs text-white/80 hover:bg-white/10 hover:text-white"
                       >
                         Update
                       </button>
                     </div>
                   </div>
 
+                  {/* Direct Photo URL Input with live preview */}
+                  <div className="space-y-1">
+                    <label className="block text-[11px] font-medium text-white/50">
+                      Avatar / Photo URL (External link or local path)
+                    </label>
+                    <input
+                      name="photoUrl"
+                      type="text"
+                      defaultValue={t.photo_url ?? ""}
+                      placeholder="https://... (preserves Supabase storage)"
+                      className="w-full rounded-xl border border-white/10 bg-black/30 px-3.5 py-2 text-xs text-white/90 outline-none focus:border-[#6f8cff]"
+                    />
+                  </div>
+
                   <div>
+                    <label className="block text-[11px] font-medium text-white/50 mb-1">
+                      Client Quote / Endorsement
+                    </label>
                     <textarea
                       name="quote"
                       defaultValue={t.quote}

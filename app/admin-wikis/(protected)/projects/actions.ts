@@ -36,6 +36,8 @@ function parsedProject(fd: FormData) {
     visibility: fd.get("visibility") || "public",
     featured: checked(fd, "featured"),
     confidential: checked(fd, "confidential"),
+    cardMediaUrl: String(fd.get("cardMediaUrl") ?? "").trim() || undefined,
+    heroMediaUrl: String(fd.get("heroMediaUrl") ?? "").trim() || undefined,
     liveUrl: String(fd.get("liveUrl") ?? "").trim(),
     githubUrl: String(fd.get("githubUrl") ?? "").trim(),
     seoTitle: text(fd.get("seoTitle")) ?? undefined,
@@ -78,17 +80,39 @@ async function persistProject(fd: FormData, userId: string, supabase: Awaited<Re
     redirect(`/admin-wikis/projects/${id}?error=${encodeURIComponent(errorMsg)}`);
   }
   const v = parsed.data;
+
+  // Try updating with card_media_url and hero_media_url if columns exist:
+  const basePayload = projectPayload(v);
+  const extendedPayload = {
+    ...basePayload,
+    card_media_url: v.cardMediaUrl || null,
+    hero_media_url: v.heroMediaUrl || null,
+    updated_by: userId,
+    updated_at: new Date().toISOString(),
+  };
+
   const { error } = await supabase
     .from("projects")
-    .update({
-      ...projectPayload(v),
-      updated_by: userId,
-      updated_at: new Date().toISOString(),
-    })
+    .update(extendedPayload)
     .eq("id", id);
 
   if (error) {
-    redirect(`/admin-wikis/projects/${id}?error=${encodeURIComponent("Database error: " + error.message)}`);
+    // If column doesn't exist yet in Supabase table (error code 42703), retry with base payload:
+    if (error.code === "42703") {
+      const { error: retryError } = await supabase
+        .from("projects")
+        .update({
+          ...basePayload,
+          updated_by: userId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      if (retryError) {
+        redirect(`/admin-wikis/projects/${id}?error=${encodeURIComponent("Database error: " + retryError.message)}`);
+      }
+    } else {
+      redirect(`/admin-wikis/projects/${id}?error=${encodeURIComponent("Database error: " + error.message)}`);
+    }
   }
 
   await supabase.from("project_category_links").delete().eq("project_id", id);
@@ -250,6 +274,13 @@ export async function publishProject(fd: FormData) {
     heroMediaUrl = urlFor(project.hero_media_id);
   }
 
+  // Prioritize direct pasted image URLs (which save Supabase storage) over storage media uploads:
+  const directCardUrl = text(fd.get("cardMediaUrl")) || (project as any).card_media_url || (project.published_snapshot as any)?.card_media_url;
+  const directHeroUrl = text(fd.get("heroMediaUrl")) || (project as any).hero_media_url || (project.published_snapshot as any)?.hero_media_url;
+
+  const finalCardMediaUrl = directCardUrl || cardMediaUrl;
+  const finalHeroMediaUrl = directHeroUrl || heroMediaUrl;
+
   const snapshot = {
     title: project.title,
     slug: project.slug,
@@ -265,8 +296,8 @@ export async function publishProject(fd: FormData) {
     confidential: project.confidential,
     live_url: project.confidential ? null : project.live_url,
     github_url: project.confidential ? null : project.github_url,
-    card_media_url: cardMediaUrl,
-    hero_media_url: heroMediaUrl,
+    card_media_url: finalCardMediaUrl,
+    hero_media_url: finalHeroMediaUrl,
     seo_title: project.seo_title,
     seo_description: project.seo_description,
     seo_image_url: project.seo_image_url,

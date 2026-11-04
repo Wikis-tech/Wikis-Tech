@@ -58,6 +58,18 @@ export const projectSchema = z.object({
     .max(1000)
     .optional()
     .transform((v) => (v === "" ? undefined : v)),
+  cardMediaUrl: z
+    .string()
+    .trim()
+    .max(1000)
+    .optional()
+    .transform((v) => (v === "" ? undefined : v)),
+  heroMediaUrl: z
+    .string()
+    .trim()
+    .max(1000)
+    .optional()
+    .transform((v) => (v === "" ? undefined : v)),
   seoTitle: optionalText(120),
   seoDescription: optionalText(500),
   seoImageUrl: z
